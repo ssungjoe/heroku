@@ -1,0 +1,6 @@
+discord.py
+Pillow
+numpy
+xmltodict
+requests
+urllib3
