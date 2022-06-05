@@ -60,8 +60,7 @@ class Wolfram(object):
         try:
             fnt = ImageFont.truetype('arial.ttf', 15)
         except:
-            #fnt = ImageFont.load_default()
-            fnt = ImageFont.truetype('assets/Nunito-Regular.ttf', 15)
+            fnt = ImageFont.load_default()
         background_color=(255,255,255)
         image = Image.new(mode = "RGB", size = (10*len(text),20), color = background_color)
         draw = ImageDraw.Draw(image)
