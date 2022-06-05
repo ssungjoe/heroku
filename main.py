@@ -136,8 +136,9 @@ async def hello(ctx, *, txt):
     a='';
     if __name__=="__main__":
         #await ctx.send(f'{ctx.author.mention}님 안녕하세요!')
-        a=Wolfram(txt).output()[1]
+        a=Wolfram(txt)
         await ctx.send('processing...')
+        a=a.output()[1]
 
     #a.show()
     if not isinstance(a, str):
