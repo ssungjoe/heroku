@@ -57,7 +57,7 @@ class Wolfram(object):
 
 
     def text_to_img(self,text):
-        fnt = ImageFont.truetype('arial.ttf', 15)
+        fnt = ImageFont.truetype('arial', 15)
         background_color=(255,255,255)
         image = Image.new(mode = "RGB", size = (10*len(text),20), color = background_color)
         draw = ImageDraw.Draw(image)
