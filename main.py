@@ -60,9 +60,9 @@ class Wolfram(object):
         try:
             fnt = ImageFont.truetype('arial.ttf', 15)
         except:
-            #fnt = ImageFont.load_default()
-            truetype_url = 'https://github.com/googlefonts/roboto/blob/master/src/hinted/Roboto-Regular.ttf'
-            fnt = ImageFont.truetype(urlopen(truetype_url), size=15)
+            fnt = ImageFont.load_default()
+            #truetype_url = 'https://github.com/googlefonts/roboto/blob/master/src/hinted/Roboto-Regular.ttf'
+            #fnt = ImageFont.truetype(urlopen(truetype_url), size=15)
         background_color=(255,255,255)
         image = Image.new(mode = "RGB", size = (10*len(text),20), color = background_color)
         draw = ImageDraw.Draw(image)
