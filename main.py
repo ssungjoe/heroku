@@ -62,7 +62,7 @@ class Wolfram(object):
         except:
             fnt = ImageFont.load_default()
         background_color=(255,255,255)
-        image = Image.new(mode = "RGB", size = (10*len(text),20), color = background_color)
+        image = Image.new(mode = "RGB", size = (8*len(text),20), color = background_color)
         draw = ImageDraw.Draw(image)
         draw.text((1,1), text, font=fnt, fill=(0,70,170))
         return image
@@ -88,7 +88,7 @@ class Wolfram(object):
 
     def merge_image(self,images):
         widths, heights = zip(*(i.size for i in images))
-        new_width = max(widths)+30
+        new_width = max(widths)+20
         new_height = sum(heights)+15*len(images)
         new_im = Image.new('RGB', (new_width, new_height), color=(255,255,255))
 
@@ -136,17 +136,20 @@ async def hello(ctx, *, txt):
     a='';
     if __name__=="__main__":
         #await ctx.send(f'{ctx.author.mention}님 안녕하세요!')
-        a=Wolfram(txt)
+        a=Wolfram(txt).output()[1]
         await ctx.send('processing...')
-        a=a.output()[1][0]
+
     #a.show()
-    with BytesIO() as image_binary:
-        # 이미지를 BytesIO 스트림에 저장
-        a.save(image_binary, "png")
-        # BytesIO 스트림의 0바이트(처음)로 이동
-        image_binary.seek(0)
-        # discord.File 인스턴스 생성
-        out = discord.File(fp=image_binary, filename="result.png")
-        await ctx.send(file=out)
+    if not isinstance(a, str):
+        a=a[0]
+        with BytesIO() as image_binary:
+            # 이미지를 BytesIO 스트림에 저장
+            a.save(image_binary, "png")
+            # BytesIO 스트림의 0바이트(처음)로 이동
+            image_binary.seek(0)
+            # discord.File 인스턴스 생성
+            out = discord.File(fp=image_binary, filename="result.png")
+            await ctx.send(file=out)
+    else : await ctx.send('No result found')
 # Close the bot
 bot.run(token)
