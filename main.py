@@ -44,7 +44,7 @@ class Wolfram(object):
             if word==' ':
                 encoded_query=encoded_query+"%20"
             elif word=='/':
-                encoded_query=encoded_query+"%5c"
+                encoded_query=encoded_query+"%2F"
             elif word=='+':
                 encoded_query=encoded_query+"%2B"
             elif word=='&':
