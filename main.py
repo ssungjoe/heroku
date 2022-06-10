@@ -1,6 +1,8 @@
 import discord, asyncio, os
 from discord.ext import commands
 
+import string
+import random
 import urllib.request
 from urllib.request import urlopen
 import PIL
@@ -62,7 +64,7 @@ class Wolfram(object):
         except:
             fnt = ImageFont.load_default()
         background_color=(255,255,255)
-        image = Image.new(mode = "RGB", size = (8*len(text),20), color = background_color)
+        image = Image.new(mode = "RGB", size = (7*len(text)+4,20), color = background_color)
         draw = ImageDraw.Draw(image)
         draw.text((1,1), text, font=fnt, fill=(0,70,170))
         return image
@@ -72,18 +74,29 @@ class Wolfram(object):
         if doc["queryresult"]["@success"]=="false" or doc["queryresult"]["@error"]=="true" or doc["queryresult"]["@numpods"]=="1":
             return False
         for i in range(0,len(doc["queryresult"]["pod"])):
-            if (int(doc["queryresult"]["pod"][i]["@numsubpods"]) >1):
-                self.pod_title.append(doc["queryresult"]["pod"][i]["@title"])
-                self.image_url_array.append(doc["queryresult"]["pod"][i]["subpod"][0]["img"]["@src"])
+            n = int(doc["queryresult"]["pod"][i]["@numsubpods"])
+            if (n > 1):
+                #self.pod_title.append(doc["queryresult"]["pod"][i]["@title"])
+                #self.image_url_array.append(doc["queryresult"]["pod"][i]["subpod"][0]["img"]["@src"])
+                title = doc["queryresult"]["pod"][i]["@title"]
+                self.img_array.append(self.text_to_img(title))
+                for j in range(0, n) :
+                    img = doc["queryresult"]["pod"][i]["subpod"][j]["img"]["@src"]
+                    self.img_array.append(self.download_image(img))
             else:
-                self.pod_title.append(doc["queryresult"]["pod"][i]["@title"])
-                self.image_url_array.append(doc["queryresult"]["pod"][i]["subpod"]["img"]["@src"])
+                #self.pod_title.append(doc["queryresult"]["pod"][i]["@title"])
+                #self.image_url_array.append(doc["queryresult"]["pod"][i]["subpod"]["img"]["@src"])
+                title = doc["queryresult"]["pod"][i]["@title"]
+                img = doc["queryresult"]["pod"][i]["subpod"]["img"]["@src"]
+                self.img_array.append(self.text_to_img(title))
+                self.img_array.append(self.download_image(img))
+
         return True
 
     def image_array_setup(self):
-        for i in range(0,len(self.pod_title)):
-            self.img_array.append(self.text_to_img(self.pod_title[i]))
-            self.img_array.append(self.download_image(self.image_url_array[i]))
+        #for i in range(0,len(self.pod_title)):
+        #    self.img_array.append(self.text_to_img(self.pod_title[i]))
+        #    self.img_array.append(self.download_image(self.image_url_array[i]))
         return self.image_processing()
 
     def merge_image(self,images):
@@ -121,7 +134,8 @@ class Wolfram(object):
         result_check=self.response_handling(xml)
 
         if(result_check):
-            a=self.image_array_setup()
+            #a=self.image_array_setup()
+            a = self.image_processing()
             return (True,a)
         else :
             return(False,"a")
@@ -132,24 +146,21 @@ token = 'OTgyNTc4NTIwOTY0MzQxNzkx.GWtY8l.z7BFGscF6MJgRUn1PTRbdp85SRJWJZyDqjQ7-w'
 
 @bot.command(aliases=['wolf'])
 async def hello(ctx, *, txt):
-    #await ctx.send(txt)#f'{ctx.author.mention}님 안녕하세요!')
     a='';
     if __name__=="__main__":
-        #await ctx.send(f'{ctx.author.mention}님 안녕하세요!')
         a=Wolfram(txt)
         await ctx.send('processing...')
         a=a.output()[1]
 
-    #a.show()
     if not isinstance(a, str):
         a=a[0]
         with BytesIO() as image_binary:
-            # 이미지를 BytesIO 스트림에 저장
             a.save(image_binary, "png")
-            # BytesIO 스트림의 0바이트(처음)로 이동
             image_binary.seek(0)
-            # discord.File 인스턴스 생성
-            out = discord.File(fp=image_binary, filename="result.png")
+            # make random string <name>
+            name = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+            name = name + '.png'
+            out = discord.File(fp=image_binary, filename=name)
             await ctx.send(file=out)
     else : await ctx.send('No result found')
 # Close the bot
